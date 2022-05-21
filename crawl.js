@@ -12,7 +12,6 @@ module.exports = async function crawl(baseURL, navigateURL, numberOfPages = 1) {
   await page.goto(baseURL, {
     waitUntil: "networkidle2",
   });
-
   const listURL = []; // list all Case Item in Tiki
   for (let i = 1; i <= numberOfPages; i++) {
     await page.goto(`${navigateURL}?page=${i}`, {
@@ -32,8 +31,11 @@ module.exports = async function crawl(baseURL, navigateURL, numberOfPages = 1) {
   for (let i = 0; i < listURL.length; i++) {
     const url = listURL[i];
     await page.goto(`${baseURL}${url}`);
+    //sku
+    let sku = url.split('-');
+    sku = sku[sku.length - 1].split('.')[0];
     try {
-      const productInfo = await page.evaluate(() => {
+      const productInfo = await page.evaluate((sku) => {
         //Name of Product
         const productName = document.querySelector(".header .title").innerText;
         // Regular Price of Product
@@ -111,6 +113,7 @@ module.exports = async function crawl(baseURL, navigateURL, numberOfPages = 1) {
           };
         });
         return {
+          sku,
           productName,
           regularPrice,
           salePrice,
@@ -122,7 +125,7 @@ module.exports = async function crawl(baseURL, navigateURL, numberOfPages = 1) {
           images,
           style,
         };
-      });
+      },sku);
       objCrawledData.push(productInfo);
     } catch (e) {
       console.log(e);

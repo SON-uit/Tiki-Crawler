@@ -103,6 +103,7 @@ function createMoreInfo(data, header) {
 }
 function convertData(data) {
   return {
+    sku: data.sku,
     productName: data.productName,
     regularPrice: data.regularPrice,
     salePrice: data.regularPrice === data.salePrice ? "" : data.salePrice,
@@ -115,18 +116,20 @@ function convertData(data) {
   };
 }
 function writeToTxt(text) {
-  fs.writeFileSync("test2.txt", text, "utf8");
+  fs.writeFileSync("testskus.txt", text, "utf8");
 }
 (async () => {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   page.setViewport({ width: 1280, height: 720 });
   const baseURL =
-    "https://tiki.vn/pin-sac-du-phong-anker-powercore-metro-essential-20000-ho-tro-cong-type-c-in-a1268-hang-chinh-hang-p48493605.html";
+    "https://tiki.vn/op-lung-iphone-13-pro-leather-case-with-magsafe-dark-cherry-hang-chinh-hang-mm1a3fe-a-p176060167.html";
   await page.goto(baseURL, {
     waitUntil: "networkidle2",
   });
-  const productInfo = await page.evaluate(() => {
+  let sku = baseURL.split('-');
+  sku = sku[sku.length - 1].split('.')[0];
+  const productInfo = await page.evaluate((sku) => {
     //Name of Product
     const productName = document.querySelector(".header .title").innerText;
     // Regular Price of Product
@@ -193,6 +196,7 @@ function writeToTxt(text) {
       };
     });
     return {
+      sku: sku,
       productName,
       regularPrice,
       salePrice,
@@ -202,7 +206,7 @@ function writeToTxt(text) {
       images,
       style,
     };
-  });
+  },sku);
   writeToTxt(mapping(convertData(productInfo)));
   /* const listURL = []; // list all Case Item in Tiki
   for (let i = 1; i <= 1; i++) {

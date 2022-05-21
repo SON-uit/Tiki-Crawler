@@ -17,6 +17,7 @@ function createMoreInfo(data, header) {
 function convertData(data) {
   return data.map((el) => {
     return {
+      sku: el.sku,
       productName: el.productName,
       regularPrice: el.regularPrice,
       salePrice: el.regularPrice === el.salePrice ? "" : el.salePrice,
@@ -35,7 +36,7 @@ function writeToTxt(text,fileName) {
   fs.writeFileSync(`${fileName}.txt`, text, "utf8");
 }
 (async () => {
-  const data = await crawl(baseURL, navigateURL,2); // baseURL, navigateURL, numberOfPage
+  const data = await crawl(baseURL, navigateURL,1); // baseURL, navigateURL, numberOfPage
   const mappingText = mapping(convertData(data));
-  await writeToTxt(mappingText,'sacduphong');
+  await writeToTxt(mappingText,'testsku');
 })();
