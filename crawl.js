@@ -32,8 +32,8 @@ module.exports = async function crawl(baseURL, navigateURL, numberOfPages = 1) {
     const url = listURL[i];
     await page.goto(`${baseURL}${url}`);
     //sku
-    let sku = url.split('-');
-    sku = sku[sku.length - 1].split('.')[0];
+    let sku = url.split("-");
+    sku = sku[sku.length - 1].split(".")[0];
     try {
       const productInfo = await page.evaluate((sku) => {
         //Name of Product
@@ -125,7 +125,7 @@ module.exports = async function crawl(baseURL, navigateURL, numberOfPages = 1) {
           images,
           style,
         };
-      },sku);
+      }, sku);
       objCrawledData.push(productInfo);
     } catch (e) {
       console.log(e);
